@@ -5,13 +5,14 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , user = require('./routes/user')
+  , api = require('./routes/api')
   , http = require('http')
   , path = require('path')
   , nstatic = require('node-static')
   , socketio = require('socket.io');
 
 var files = new nstatic.Server('./Public')
+var userLog = [];
 
 var app = express();
 
@@ -40,7 +41,8 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/partials/:name', routes.partials)
+app.get('/users', api.users);
 
 var server = http.createServer(app);
 var io = socketio.listen(server);
@@ -52,6 +54,10 @@ server.listen(app.get('port'), function(){
 io.sockets.on('connection', function (socket) {
 	console.log("connection");
 	socket.on('send:coords', function(data) {
+		userLog.push(data.id);
+		var now = new Date();
+
+		api.addUser(data.id,now);
 		socket.broadcast.emit('load:coord',data);
 	});
 });

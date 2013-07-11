@@ -1,5 +1,5 @@
 jQuery(function() {
-	var userID = Math.random().toString(16).substring(2,15);
+	var userId = Math.random().toString(16).substring(2,15);
 	var socket = io.connect("/");
 	var map;
 
@@ -50,12 +50,12 @@ socket.on("load:coords", function(data) {
             icon: redIcon
         });
  
- var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/{styleId}/256/{z}/{x}/{y}.png',
-    cloudmadeAttribution = 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade';
+ 		var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/{styleId}/256/{z}/{x}/{y}.png',
+   			cloudmadeAttribution = 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade';
  
         // leaflet API key tiler
        var base = L.tileLayer("http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png", { maxZoom: 18, detectRetina: true });
-        var style1= L.tileLayer(cloudmadeUrl, {styleId:1, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution});
+       var style1= L.tileLayer(cloudmadeUrl, {styleId:1, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution});
        var style2= L.tileLayer(cloudmadeUrl, {styleId:997, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution });
        var style3= L.tileLayer(cloudmadeUrl, {styleId:7, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution });
        var style4= L.tileLayer(cloudmadeUrl, {styleId:998, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution});
@@ -81,7 +81,7 @@ socket.on("load:coords", function(data) {
         // set map bounds
         map.fitWorld();
         userMarker.addTo(map);
-        userMarker.bindPopup("<p>You are here! </p>").openPopup();
+        userMarker.bindPopup("<p>You are here.</p>").openPopup();
  
         // send coords on when user is active
         doc.on("mousemove", function() {
