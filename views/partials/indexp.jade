@@ -1,4 +1,4 @@
 h4{{users.length}} users have logged on
-div(ng-repeat="user in users")
+div(ng-repeat="user in users | limitTo: -7")
 	p {{user.userName}} at {{user.date}} 
 

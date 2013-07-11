@@ -9,7 +9,8 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , nstatic = require('node-static')
-  , socketio = require('socket.io');
+  , socketio = require('socket.io')
+  , dateFormat = require('dateformat');
 
 var files = new nstatic.Server('./Public')
 var userLog = [];
@@ -28,7 +29,6 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
 function handler(req, res) {
-	console.log("addListener");
 	req.addListener('end', function() {
 		files.serve(req,res);
 	});
@@ -52,12 +52,10 @@ server.listen(app.get('port'), function(){
 });
 
 io.sockets.on('connection', function (socket) {
-	console.log("connection");
 	socket.on('send:coords', function(data) {
 		userLog.push(data.id);
 		var now = new Date();
-
-		api.addUser(data.id,now);
+		api.addUser(data.id,dateFormat(now,"mmmm dS, yyyy, h:MM:ss TT"));
 		socket.broadcast.emit('load:coord',data);
 	});
 });
