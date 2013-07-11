@@ -12,7 +12,7 @@
     "jade": "*"
   },
   "engines": {
-  "node": "latest",
-  "npm": "latest"
+  "node": "0.10.x",
+  "npm": "1.2.x"
   }
 }
