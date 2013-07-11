@@ -1,4 +1,5 @@
  
+var userLog=[];
 
 exports.users = function(req, res){
   console.log("Users sent")
