@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "vIllume",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,5 +10,9 @@
     "socket.io": "latest",
     "express": "3.3.3",
     "jade": "*"
+  },
+  "engines": {
+  "node": "latest",
+  "npm": "latest"
   }
 }
