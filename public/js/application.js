@@ -6,17 +6,6 @@ var map;
 var editMode = false;
 var drawControl;
 
-var testData={
-    	 max: 31,
-    	 data: [{lat: 33.5363, lon:-117.044, value: 1},
-         {lat: 51.5167, lon:-0.7, value: 2},
-    	 {lat: 51.5167, lon:-0.7, value: 6},
-    	 {lat: 60.3911, lon:5.3247, value: 1},
-    	 {lat: 50.8333, lon:12.9167, value: 9},
-    	 {lat: 50.8333, lon:12.9167, value: 1},
-    	 {lat: 52.0833, lon:4.3, value: 3},
-    	 {lat: 52.0833, lon:4.3, value: 1}]};
-
 function enableEditor() {
 	if (!editMode) {
 		var myCustomMarker = L.Icon.extend({
@@ -108,6 +97,8 @@ socket.on("load:coords", function(data) {
 	connects[data.id] = data;
 	connects[data.id].updated = $.now();
 });
+
+
 
  if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(positionSuccess, positionError, { enableHighAccuracy: true });

@@ -1,5 +1,5 @@
 angular.module('myApp',['myApp.filters', 'myApp.services', 'myApp.directives']).
-  config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+  config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider.
       when('/', {
         templateUrl: 'partials/indexp',
@@ -9,4 +9,5 @@ angular.module('myApp',['myApp.filters', 'myApp.services', 'myApp.directives']).
         redirectTo: '/'
       });
     $locationProvider.html5Mode(true);
-  }]);
+
+}]);

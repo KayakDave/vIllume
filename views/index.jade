@@ -11,4 +11,7 @@ block body
 		div.control
 			button.button1.btn.btn-primary(onClick="enableEditor()",data-toggle="button") Editor
 		div(ng-view)
+		div
+			ul
+				li(ng-repeat="items in feed.items")
 
