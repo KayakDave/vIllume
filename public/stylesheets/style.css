@@ -118,3 +118,24 @@ h1 {
     margin-right: 8px;
     opacity: 0.7;
 }
+
+.control {
+	margin: 15px 15px;
+}
+
+.button1{
+  background-color: hsl(214, 40%, 28%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#85a3ca", endColorstr="#2a4363");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#85a3ca), to(#2a4363));
+  background-image: -moz-linear-gradient(top, #85a3ca, #2a4363);
+  background-image: -ms-linear-gradient(top, #85a3ca, #2a4363);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #85a3ca), color-stop(100%, #2a4363));
+  background-image: -webkit-linear-gradient(top, #85a3ca, #2a4363);
+  background-image: -o-linear-gradient(top, #85a3ca, #2a4363);
+  background-image: linear-gradient(#85a3ca, #2a4363);
+  border-color: #2a4363 #2a4363 hsl(214, 40%, 18.5%);
+  color: #fff !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.62);
+  -webkit-font-smoothing: antialiased;
+}

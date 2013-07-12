@@ -2,8 +2,52 @@
 //  leaflet.js interface code 
 //  Information on leaflet at http://leafletjs.com/examples/quick-start.html
 //
+var map;
+var editMode = false;
+var drawControl;
+
+var testData={
+    	 max: 31,
+    	 data: [{lat: 33.5363, lon:-117.044, value: 1},
+         {lat: 51.5167, lon:-0.7, value: 2},
+    	 {lat: 51.5167, lon:-0.7, value: 6},
+    	 {lat: 60.3911, lon:5.3247, value: 1},
+    	 {lat: 50.8333, lon:12.9167, value: 9},
+    	 {lat: 50.8333, lon:12.9167, value: 1},
+    	 {lat: 52.0833, lon:4.3, value: 3},
+    	 {lat: 52.0833, lon:4.3, value: 1}]};
+
+function enableEditor() {
+	if (!editMode) {
+		var myCustomMarker = L.Icon.extend({
+		    options: {
+		        shadowUrl: null,
+		        iconAnchor: new L.Point(12, 12),
+		        iconSize: new L.Point(24, 24),
+		        iconUrl: 'assets/marker-red.png'
+		    }
+		});
+
+		var drawnItems = new L.FeatureGroup().addTo(map);
+
+		drawControl = new L.Control.Draw({
+			edit: {
+				featureGroup: drawnItems
+			}
+		});
+
+		map.on('draw:created', function(e) {
+			drawnItems.addLayer(e.layer);
+		});
 
 
+		map.addControl(drawControl);
+		editMode= true;
+	} else {
+		map.removeControl(drawControl);
+		editMode= false;
+	}
+}
 
 // Sets colors for each population density
 function getDensityColor(d) {
@@ -32,7 +76,7 @@ function densityStyle(feature) {
 $(function() {
 	var userId = Math.random().toString(16).substring(2,15);
 	var socket = io.connect("/");
-	var map;
+
 
 	var info = $("#infobox");
 	var doc = $(document);
@@ -107,9 +151,23 @@ socket.on("load:coords", function(data) {
        // Information on geoJson:  http://leafletjs.com/examples/geojson.html
        var states= L.geoJson(statesData, {style: densityStyle, onEachFeature: onEachFeature});
 
+	   var heatMapLayer = L.TileLayer.heatMap({
+   	   	    radius: { value: 150000, absolute: true },
+	        opacity: 0.8,
+	        gradient: {
+	            0.45: "rgb(0,0,255)",
+	            0.55: "rgb(0,255,255)",
+	            0.65: "rgb(0,255,0)",
+	            0.95: "yellow",
+	            1.0: "rgb(255,0,0)"
+	        }
+	    });
+	    heatMapLayer.setData(heatMapData.data);
+
        var overlayMaps = {
        	"Freeways": roads,
-       	"State Density": states
+       	"State Density": states,
+       	"Heat map": heatMapLayer
        }
 
         // load leaflet map with "base" set as the default map
@@ -213,7 +271,6 @@ socket.on("load:coords", function(data) {
 
 		    return div;
 		};
-
 		
 
          
