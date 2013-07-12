@@ -5,6 +5,24 @@
 var map;
 var editMode = false;
 var drawControl;
+var pdx911;
+var tinyIcon = L.Icon.extend({
+	options: {
+		shadowURL: "../assets/marker-shadow.png",
+		iconSize: [15, 25],
+		iconAnchor: [12,36],
+		shadowSize: [41,41],
+		shadowAnchor: [12, 38],
+		popupAnchor: [0, -30]
+	}
+});
+var redIcon = new tinyIcon({iconUrl: "../assets/marker-red.png"});
+var yellowIcon = new tinyIcon({iconUrl: "../assets/marker-yellow.png"});
+var blueIcon = new tinyIcon({iconUrl: "../assets/marker-blue.png"});
+var orangeIcon = new tinyIcon({iconUrl: "../assets/marker-orange.png"});
+var greenIcon = new tinyIcon({iconUrl: "../assets/marker-green.png"});
+var grayIcon = new tinyIcon({iconUrl: "../assets/marker-gray.png"});
+var pdxMarkers = [];
 
 function enableEditor() {
 	if (!editMode) {
@@ -62,6 +80,55 @@ function densityStyle(feature) {
     };
 }
 
+function handoffPdx911(pdx911data) {
+	pdx911 = pdx911data;
+	waitForMap();
+}
+
+var waitCount=0;
+function waitForMap() {
+	if (waitCount > 4)
+		console.log("Error: waiting too long");
+	if (!map)
+	{
+		setTimeout(waitForMap, 200);
+		console.log(map);
+		waitCount++;
+	}
+	else
+		loadPdx911Markers();
+}
+function loadPdx911Markers()
+{
+    for (var i =0;i < pdx911.feed.entry.length;i++)
+     {
+        pdxEntry = pdx911.feed.entry[i];	
+    	latlong = pdxEntry['georss:point'].toString().split(/ /g);
+    	lat = latlong[0]; lng = latlong[1];
+    	var entryTime = pdxEntry.updated;
+    	if (pdxEntry.category[0]['$']['label'].toString() == 'TRAFFIC STOP')
+    	{
+	    	L.marker([lat, lng], {
+	            icon: grayIcon
+	        }).addTo(map).bindPopup(pdxEntry.title.toString() + entryTime.toString());
+        } else if (pdxEntry.category[0]['$']['label'].toString() == 'SHOTS FIRED') 
+        {
+	    	L.marker([lat, lng], {
+	            icon: redIcon
+	        }).addTo(map).bindPopup(pdxEntry.title.toString() + ' ' +  entryTime.toString());
+        } else if (pdxEntry.category[0]['$']['label'].toString() == 'MED - MEDICAL') 
+        {
+	    	L.marker([lat, lng], {
+	            icon: orangeIcon
+	        }).addTo(map).bindPopup(pdxEntry.title.toString() + ' ' +  entryTime.toString());
+        } else {
+	    	L.marker([lat, lng], {
+	            icon: blueIcon
+	        }).addTo(map).bindPopup(pdxEntry.title.toString() + ' ' + entryTime.toString());
+        }
+    }
+}
+
 $(function() {
 	var userId = Math.random().toString(16).substring(2,15);
 	var socket = io.connect("/");
@@ -70,19 +137,8 @@ $(function() {
 	var info = $("#infobox");
 	var doc = $(document);
 
-	var tinyIcon = L.Icon.extend({
-		options: {
-			shadowURL: "../assets/marker-shadow.png",
-			iconSize: [25, 39],
-			iconAnchor: [12,36],
-			shadowSize: [41,41],
-			shadowAnchor: [12, 38],
-			popupAnchor: [0, -30]
-		}
-	});
 
-var redIcon = new tinyIcon({iconUrl: "../assets/marker-red.png"});
-var yellowIcon = new tinyIcon({iconUrl: "../assets/marker-yellow.png"});
+
 
 var sentData= {};
 var connects= {};
@@ -99,7 +155,6 @@ socket.on("load:coords", function(data) {
 });
 
 
-
  if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(positionSuccess, positionError, { enableHighAccuracy: true });
     } else {
@@ -113,7 +168,7 @@ socket.on("load:coords", function(data) {
  
         // mark user's position
         var userMarker = L.marker([lat, lng], {
-            icon: redIcon
+            icon: greenIcon
         });
  
  		var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/{styleId}/256/{z}/{x}/{y}.png',
@@ -154,6 +209,7 @@ socket.on("load:coords", function(data) {
 	        }
 	    });
 	    heatMapLayer.setData(heatMapData.data);
+
 
        var overlayMaps = {
        	"Freeways": roads,

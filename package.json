@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "xml2js": "latest",
     "dateformat": "latest",
     "node-static": "latest",
     "socket.io": "latest",

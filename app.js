@@ -42,6 +42,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/partials/:name', routes.partials)
+app.get('/api/pdx911', api.pdx911);
 app.get('/users', api.users);
 
 var server = http.createServer(app);
