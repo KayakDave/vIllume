@@ -110,21 +110,22 @@ function loadPdx911Markers()
     	{
 	    	L.marker([lat, lng], {
 	            icon: grayIcon
-	        }).addTo(map).bindPopup(pdxEntry.title.toString() + entryTime.toString());
+	        }).addTo(map).bindPopup(pdxEntry.content[0]['_'].toString());
         } else if (pdxEntry.category[0]['$']['label'].toString() == 'SHOTS FIRED') 
         {
 	    	L.marker([lat, lng], {
 	            icon: redIcon
-	        }).addTo(map).bindPopup(pdxEntry.title.toString() + ' ' +  entryTime.toString());
+	        }).addTo(map).bindPopup(pdxEntry.content[0]['_'].toString());
         } else if (pdxEntry.category[0]['$']['label'].toString() == 'MED - MEDICAL') 
         {
 	    	L.marker([lat, lng], {
 	            icon: orangeIcon
-	        }).addTo(map).bindPopup(pdxEntry.title.toString() + ' ' +  entryTime.toString());
+	        }).addTo(map).bindPopup(pdxEntry.content[0]['_'].toString());
         } else {
+        	// console.log("data: ",pdxEntry.content[0]['_'])
 	    	L.marker([lat, lng], {
 	            icon: blueIcon
-	        }).addTo(map).bindPopup(pdxEntry.title.toString() + ' ' + entryTime.toString());
+	        }).addTo(map).bindPopup(pdxEntry.content[0]['_'].toString());
         }
     }
 }
