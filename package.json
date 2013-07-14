@@ -11,7 +11,8 @@
     "node-static": "latest",
     "socket.io": "latest",
     "express": "3.3.3",
-    "jade": "*"
+    "jade": "*",
+    "mongodb": "latest"
   },
   "engines": {
   "node": "0.10.x",

@@ -91,7 +91,7 @@ function waitForMap() {
 		console.log("Error: waiting too long");
 	if (!map)
 	{
-		setTimeout(waitForMap, 200);
+		setTimeout(waitForMap, 100);
 		console.log(map);
 		waitCount++;
 	}
@@ -100,32 +100,32 @@ function waitForMap() {
 }
 function loadPdx911Markers()
 {
-    for (var i =0;i < pdx911.feed.entry.length;i++)
+    for (var i =0;i < pdx911.length;i++)
      {
-        pdxEntry = pdx911.feed.entry[i];	
+        pdxEntry = pdx911[i];	
     	latlong = pdxEntry['georss:point'].toString().split(/ /g);
     	lat = latlong[0]; lng = latlong[1];
     	var entryTime = pdxEntry.updated;
-    	if (pdxEntry.category[0]['$']['label'].toString() == 'TRAFFIC STOP')
+    	if (pdxEntry.category['label'].toString() == 'TRAFFIC STOP')
     	{
 	    	L.marker([lat, lng], {
 	            icon: grayIcon
-	        }).addTo(map).bindPopup(pdxEntry.content[0]['_'].toString());
-        } else if (pdxEntry.category[0]['$']['label'].toString() == 'SHOTS FIRED') 
+	        }).addTo(map).bindPopup(pdxEntry.content['_'].toString());
+        } else if (pdxEntry.category['label'].toString() == 'SHOTS FIRED') 
         {
 	    	L.marker([lat, lng], {
 	            icon: redIcon
-	        }).addTo(map).bindPopup(pdxEntry.content[0]['_'].toString());
-        } else if (pdxEntry.category[0]['$']['label'].toString() == 'MED - MEDICAL') 
+	        }).addTo(map).bindPopup(pdxEntry.content['_'].toString());
+        } else if (pdxEntry.category['label'].toString() == 'MED - MEDICAL') 
         {
 	    	L.marker([lat, lng], {
 	            icon: orangeIcon
-	        }).addTo(map).bindPopup(pdxEntry.content[0]['_'].toString());
+	        }).addTo(map).bindPopup(pdxEntry.content['_'].toString());
         } else {
         	// console.log("data: ",pdxEntry.content[0]['_'])
 	    	L.marker([lat, lng], {
 	            icon: blueIcon
-	        }).addTo(map).bindPopup(pdxEntry.content[0]['_'].toString());
+	        }).addTo(map).bindPopup(pdxEntry.content['_'].toString());
         }
     }
 }
