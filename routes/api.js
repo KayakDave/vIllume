@@ -68,6 +68,7 @@ function updatePdx911 (response) {
 		   {
 	
 	           cEntry = pdxJson.entry[i];
+	           cEntry._id= cEntry.id;
 			   collection.update({_id:cEntry.id},cEntry, {upsert: true},function(err,results){
 			   	if (err) throw err;
 			   });
