@@ -1,4 +1,18 @@
+header
+	h1 villume
+div.search
+	span Search:
+	input(ng-model='search',ng-change="updatePdx911Markers()")
+div.app
+div.loading
+div#infobox.infobox
+div#map
+div.control
+	button.button1.btn.btn-primary(onClick="enableEditor()",data-toggle="button") Editor
+h4{{pdx9111.length}} events logged ({{search}})
+div(ng-repeat="entry in pdx911.pdx911| filter:search")
+	p {{entry.category.label}} at {{entry.updated}}
 h4{{users.length}} users have logged on
-div(ng-repeat="user in users | limitTo: -7")
+div(ng-repeat="user in users.users | limitTo: -7")
 	p {{user.userName}} at {{user.date}} 
 
