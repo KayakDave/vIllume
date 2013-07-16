@@ -1,4 +1,5 @@
-angular.module('myApp',['ngResource', 'myApp.filters', 'myApp.services', 'myApp.directives'])
+// var myApp=angular.module('myApp',['ngResource', 'myApp.filters', 'myApp.services', 'myApp.directives'])
+var myApp=angular.module('myApp',['ngResource', 'myApp.filters', 'myApp.directives'])
   .config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider.
       when('/', {

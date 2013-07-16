@@ -3,14 +3,14 @@ var editMode = false;
 var drawControl;
 var pdx911;
 var tinyIcon = L.Icon.extend({
-	options: {
-		shadowURL: "../assets/marker-shadow.png",
-		iconSize: [15, 25],
-		iconAnchor: [12,36],
-		shadowSize: [41,41],
-		shadowAnchor: [12, 38],
-		popupAnchor: [0, -30]
-	}
+    	options: {
+    		shadowURL: "../assets/marker-shadow.png",
+    		iconSize: [15, 25],
+    		iconAnchor: [12,36],
+    		shadowSize: [41,41],
+    		shadowAnchor: [12, 38],
+    		popupAnchor: [0, -30]
+    	}
 });
 var redIcon = new tinyIcon({iconUrl: "../assets/marker-red.png"});
 var yellowIcon = new tinyIcon({iconUrl: "../assets/marker-yellow.png"});
@@ -20,8 +20,7 @@ var greenIcon = new tinyIcon({iconUrl: "../assets/marker-green.png"});
 var grayIcon = new tinyIcon({iconUrl: "../assets/marker-gray.png"});
 var pdxMarkers = [];
 var markersGroup;
-
-var dataAvail = false;
+var heatMap911Group;
 
 function enableEditor() {
 	if (!editMode) {
@@ -102,7 +101,8 @@ function densityStyle(feature) {
 // }
 loadPdx911Markers = function($scope)
 {
-	markersGroup = L.layerGroup();
+	var heat911Data = [];
+
    	var pdxEntries = $scope.pdx911.pdx911;
     for (var i =0;i < pdxEntries.length;i++)
      {
@@ -133,8 +133,14 @@ loadPdx911Markers = function($scope)
         }
         newMarker.bindPopup(pdxEntry.content['_'].toString());
         markersGroup.addLayer(newMarker);
+
+        heat911Data.push({lat: lat, lon: lng,value:1});
+ 
     }
     markersGroup.addTo(map);
+
+  
+    heatMap911.setData(heat911Data);
 }
 
 
@@ -146,8 +152,11 @@ function IndexCtrl($scope, $http, $resource, $filter) {
 	// using ng-change
 	$scope.updatePdx911Markers = function()
 	{
-		console.log("marker draw");
+		var heat911Data = [];
 		markersGroup.clearLayers();  // remove all markers from group
+        // heatMap911.redraw();
+        map.removeLayer(heatMap911);
+
 		if ($scope.search)
 		   var pdxEntries = $filter('filter')($scope.pdx911.pdx911,$scope.search);
 		else
@@ -181,14 +190,18 @@ function IndexCtrl($scope, $http, $resource, $filter) {
 	        }
 	        newMarker.bindPopup(pdxEntry.content['_'].toString());
 	        markersGroup.addLayer(newMarker);
+	        heat911Data.push({lat: lat, lon: lng, value: 1});
 	    }
+	    heatMap911.setData(heat911Data);
+	    map.addLayer(heatMap911);
+	    // heatMap911.redraw();
 	}
    // $http.get('/users').
    //  success(function(data, status, headers, config) {
    //    $scope.users = data.users;
    //  });
 
-    var Users = $resource('/users');
+    var Users = $resource('/api/users');
     $scope.users = Users.get(function(){});
 
    // $http.get('/api/pdx911').
@@ -226,12 +239,12 @@ function IndexCtrl($scope, $http, $resource, $filter) {
 	});
 
 	// Note the user's current position with a green marker
- 	function positionSuccess(position) {
+ 	function markUserPosition(position) {
         var lat = position.coords.latitude;
         var lng = position.coords.longitude;
         var acr = position.coords.accuracy;
  
-        // mark user's position
+        // mark user's position using greenIcon
         var userMarker = L.marker([lat, lng], {
             icon: greenIcon
         });
@@ -239,7 +252,7 @@ function IndexCtrl($scope, $http, $resource, $filter) {
         userMarker.addTo(map);
         userMarker.bindPopup("<p>You are here.</p>").openPopup();
 
-        // Send coords back to server
+        // Send user GPS coords back to server
 	    socket.emit("send:coords", {
 	        id: userId,
 	        active: active,
@@ -252,23 +265,23 @@ function IndexCtrl($scope, $http, $resource, $filter) {
 
 
 	if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(positionSuccess, positionError, { enableHighAccuracy: true });
+        navigator.geolocation.getCurrentPosition(markUserPosition, positionError, { enableHighAccuracy: true });
     } else {
         $(".map").text("Your browser does not provide geolocation");
     }
  
    
 
-		var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/{styleId}/256/{z}/{x}/{y}.png',
-			cloudmadeAttribution = 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade';
+	var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/{styleId}/256/{z}/{x}/{y}.png',
+						cloudmadeAttribution = 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade';
 
    // Set up base maps - only one base map can be displayed at a time
-   var base = L.tileLayer("http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png", { maxZoom: 18, detectRetina: true });
+   var base =  L.tileLayer("http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png", { maxZoom: 18, detectRetina: true });
    var style1= L.tileLayer(cloudmadeUrl, {styleId:1, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution});
    var style2= L.tileLayer(cloudmadeUrl, {styleId:997, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution });
    var style3= L.tileLayer(cloudmadeUrl, {styleId:7, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution });
    var style4= L.tileLayer(cloudmadeUrl, {styleId:998, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution});
-   var gray= L.tileLayer(cloudmadeUrl, {styleId:22677, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution});
+   var gray=   L.tileLayer(cloudmadeUrl, {styleId:22677, maxZoom: 18, detectRetina: true, attribution: cloudmadeAttribution});
 
 
    var baseMaps = {
@@ -285,6 +298,7 @@ function IndexCtrl($scope, $http, $resource, $filter) {
    // Information on geoJson:  http://leafletjs.com/examples/geojson.html
    var states= L.geoJson(statesData, {style: densityStyle, onEachFeature: onEachFeature});
 
+   //Sample heat map using dummy data     
    var heatMapLayer = L.TileLayer.heatMap({
 	   	    radius: { value: 150000, absolute: true },
         opacity: 0.8,
@@ -296,18 +310,41 @@ function IndexCtrl($scope, $http, $resource, $filter) {
             1.0: "rgb(255,0,0)"
         }
     });
+    //use dummy data from file    
     heatMapLayer.setData(heatMapData.data);
 
+        
+    // Create heat map layer for 911 data
+    heatMap911 = L.TileLayer.heatMap({
+	   	    radius: { value: 150, absolute: true }, //radius of a single point in pixels
+        opacity: 0.8,
+        gradient: {
+            0.45: "rgb(0,0,255)",
+            0.55: "rgb(0,255,255)",
+            0.65: "rgb(0,255,0)",
+            0.95: "yellow",
+            1.0: "rgb(255,0,0)"
+        }
+    });
+
+    // Create a layer group to put all the 911 markers into.  This
+    // makes it easy to turn them all on and off with a single control
+    markersGroup = L.layerGroup();
 
    var overlayMaps = {
    	"Freeways": roads,
    	"State Density": states,
-   	"Heat map": heatMapLayer
+   	"Heat map": heatMapLayer,
+   	"911 Heat Map": heatMap911,
+   	"911 Markers": markersGroup 
    }
 
     // load leaflet map with "base" set as the default map
 
     map = L.map("map", {layers: [base]});
+    
+    // Create a control that allows the user to select different base maps
+    // and enable/disable overlays.  Then add the control to the map
     L.control.layers(baseMaps,overlayMaps).addTo(map);
 
 
@@ -388,6 +425,7 @@ function IndexCtrl($scope, $http, $resource, $filter) {
 		        : 'Hover over a state');
 	};
 
+
 	var stateLegend = L.control({position: 'bottomright'});
 
 	stateLegend.onAdd = function (map) {
@@ -410,23 +448,6 @@ function IndexCtrl($scope, $http, $resource, $filter) {
      
     // set map bounds
     map.fitWorld();
-
- 
-    //     // Send coordinates back to server
-    //     doc.on("mousemove", function() {
-    //         active = true; 
- 
-    //         sentData = {
-    //             id: userId,
-    //             active: active,
-    //             coords: [{
-    //                 lat: lat,
-    //                 lng: lng,
-    //                 acr: acr
-    //             }]
-    //         }
-    //         socket.emit("send:coords", sentData);
-    //     });
  
     // doc.bind("mouseup mouseleave", function() {
     //     active = false;
